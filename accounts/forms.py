@@ -30,8 +30,19 @@ class UserCreationForm(forms.ModelForm):
 
 class UserUpdateForm(forms.ModelForm):
     """Form for updating a user in Admin panel."""
-    password =ReadOnlyPasswordHashField(help_text="""Raw passwords are not stored, so there is no way to see this user's password, but you can change the password using <a href=\"../password/\">this form</a>.""")
+    password =ReadOnlyPasswordHashField(
+        help_text="""Raw passwords are not stored,
+         so there is no way to see this user's password, but you can change the password using <a href=\"../password/\">this form</a>.""")
 
     class Meta:
         model = User
         fields = ('phone_number', 'email', 'full_name' , 'password' , 'last_login')
+
+
+
+
+class UserRegisterationForm(forms.Form):
+    email = forms.EmailField()
+    full_name = forms.CharField(label='Full Name')
+    phone = forms.CharField(label='Phone Number' , max_length=11)
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)

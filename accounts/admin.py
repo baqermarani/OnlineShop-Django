@@ -2,10 +2,16 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .forms import UserCreationForm, UserUpdateForm
-from .models import User
+from .models import User , otpCode
 
 
 # Register your models here.
+@admin.register(otpCode)
+class otpCodeAdmin(admin.ModelAdmin):
+    list_display = ['phone_number', 'code' , 'created_at']
+
+
+
 class UserAdmin(BaseUserAdmin):
     form = UserUpdateForm
     add_form = UserCreationForm

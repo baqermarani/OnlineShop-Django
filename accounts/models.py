@@ -26,3 +26,16 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
+
+
+
+
+class otpCode(models.Model):
+    '''throwaway code for Registration'''
+
+    phone_number = models.CharField(max_length=11)
+    code = models.PositiveSmallIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.phone_number} - {self.code} - {self.created_at}'
