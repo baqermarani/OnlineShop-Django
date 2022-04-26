@@ -1,7 +1,7 @@
 from django.shortcuts import render , redirect
 from django.utils import timezone
 from django.views import View
-from .forms import UserRegisterationForm , VerifyCodeForm
+from .forms import UserRegisterationForm, VerifyCodeForm, UserLoginForm
 import random
 from utils import send_otp
 from .models import otpCode , User
@@ -40,7 +40,6 @@ class SignupView(View):
 class SignUpVerifyCodeView(View):
     form_class = VerifyCodeForm
 
-
     def get(self, request):
         form = self.form_class(None)
         return render(request, 'accounts/verify_code.html', {'form': form})
@@ -63,4 +62,27 @@ class SignUpVerifyCodeView(View):
         return redirect('home:home')
 
 class LoginView(View):
-    pass
+    form_class = UserLoginForm
+    template_name = 'accounts/login.html'
+
+    def get(self, request):
+        form = self.form_class(None)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = User.objects.filter(phone_number=form.cleaned_data['phone'])
+            if user.exists():
+                user = user.first()
+                if user.check_password(form.cleaned_data['password']):
+                    user.last_login = timezone.now()
+                    user.save()
+                    return redirect('home:home')
+                else:
+                    messages.error(request, 'invalid password' , 'alert alert-danger')
+                    return redirect('accounts:user_login')
+            else:
+                messages.error(request, 'invalid phone number' , 'alert alert-danger')
+                return redirect('accounts:login')
+        return render(request, self.template_name, {'form': form})

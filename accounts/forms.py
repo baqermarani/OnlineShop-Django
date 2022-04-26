@@ -61,7 +61,15 @@ class UserRegisterationForm(forms.Form):
         return phone
 
 
+class UserLoginForm(forms.Form):
+    phone = forms.CharField(label='Phone Number' , max_length=11)
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
+    def clean_phone(self):
+        phone = self.cleaned_data['phone']
+        if not User.objects.filter(phone_number=phone).exists():
+            raise ValidationError('User Does Not Exist')
+        return phone
 
 
 class VerifyCodeForm(forms.Form):
