@@ -27,11 +27,13 @@ class SignupView(View):
             random_code = random.randint(1000, 9999)
             send_otp(form.cleaned_data['phone'], random_code)
             otpCode.objects.create(phone_number=form.cleaned_data['phone'], code=random_code)
+            expire_time = timezone.now()
             request.session['user_registration_info'] = {
                'phone_number' : form.cleaned_data['phone'] ,
                'password' : form.cleaned_data['password'],
                'email' : form.cleaned_data['email'],
-               'full_name' : form.cleaned_data['full_name']
+               'full_name' : form.cleaned_data['full_name'],
+               'expire_time' : str(expire_time)
             }
             messages.success(request, 'code sent to your phone number' , 'alert alert-success')
             return redirect('accounts:verify_code')
