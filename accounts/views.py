@@ -1,3 +1,4 @@
+from django.contrib.auth import logout, authenticate, login
 from django.shortcuts import render , redirect
 from django.utils import timezone
 from django.views import View
@@ -74,17 +75,18 @@ class LoginView(View):
     def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():
-            user = User.objects.filter(phone_number=form.cleaned_data['phone'])
-            if user.exists():
-                user = user.first()
-                if user.check_password(form.cleaned_data['password']):
-                    user.last_login = timezone.now()
-                    user.save()
-                    return redirect('home:home')
-                else:
-                    messages.error(request, 'invalid password' , 'alert alert-danger')
-                    return redirect('accounts:user_login')
+            user = authenticate(username=form.cleaned_data['phone'], password=form.cleaned_data['password'])
+            if user is not None:
+                user.last_login = timezone.now()
+                user.save()
+                login(request, user)
+                return redirect('home:home')
             else:
                 messages.error(request, 'invalid phone number' , 'alert alert-danger')
                 return redirect('accounts:login')
         return render(request, self.template_name, {'form': form})
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('home:home')
