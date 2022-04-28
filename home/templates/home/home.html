@@ -6,5 +6,12 @@
     {% endblock %}
 
 {% block content %}
-    <h3>Welcome to the home page</h3>
+    {% for product in products %}
+    <div class="card" style="width: 18rem;">
+  <img class="card-img-top" src="{{ product.image.url }}" alt="Card image cap">
+  <div class="card-body">
+    <h5 class="card-title"><a href="{{ product.get_absolute_url }}" >{{ product.name }}</a></h5>
+  </div>
+</div>
+    {% endfor %}
 {% endblock %}
