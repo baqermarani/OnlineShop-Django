@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.views import View
 from .forms import UserRegisterationForm, VerifyCodeForm, UserLoginForm
 import random
-from utils import send_otp
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import otpCode , User
 from django.contrib import messages
 from . import tasks
@@ -76,18 +76,18 @@ class LoginView(View):
     def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():
-            user = authenticate(username=form.cleaned_data['phone'], password=form.cleaned_data['password'])
+            user = authenticate(request, phone_number=form.cleaned_data['phone'], password=form.cleaned_data['password'])
             if user is not None:
                 user.last_login = timezone.now()
                 user.save()
                 login(request, user)
                 return redirect('home:home')
             else:
-                messages.error(request, 'invalid phone number' , 'alert alert-danger')
+                messages.error(request, 'invalid phone number or password' , 'alert alert-danger')
                 return redirect('accounts:login')
         return render(request, self.template_name, {'form': form})
 
-class LogoutView(View):
+class LogoutView(LoginRequiredMixin ,View):
     def get(self, request):
         logout(request)
         return redirect('home:home')
