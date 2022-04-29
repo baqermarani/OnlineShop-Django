@@ -1,4 +1,9 @@
 from kavenegar import *
+from django.contrib.auth.mixins import UserPassesTestMixin
+
+
+
+
 def send_otp(phone_number, code):
     try:
         api = KavenegarAPI('6E36756B314E5948676939382F3974684370394E54504569497565574A5839475A44586C4D646E627459553D')
@@ -13,3 +18,9 @@ def send_otp(phone_number, code):
         print(e)
     except HTTPException as e:
         print(e)
+
+
+
+class IsAdminMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_admin
