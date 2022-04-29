@@ -10,4 +10,6 @@ def all_buckets_objects_task():
 def delete_object_task(key):
     bucket.delete_object(key)
 
-
+@shared_task
+def download_object_task(key):
+    bucket.download_object(key)

@@ -7,6 +7,7 @@ import random
 from utils import send_otp
 from .models import otpCode , User
 from django.contrib import messages
+from . import tasks
 # Create your views here.
 
 
@@ -26,7 +27,7 @@ class SignupView(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             random_code = random.randint(1000, 9999)
-            send_otp(form.cleaned_data['phone'], random_code)
+            tasks.send_otp_task.delay(form.cleaned_data['phone'], random_code)
             otpCode.objects.create(phone_number=form.cleaned_data['phone'], code=random_code)
             expire_time = timezone.now()
             request.session['user_registration_info'] = {
