@@ -6,9 +6,16 @@
             <div class="col-md-12">
                 <h2>{{ product.name }}</h2>
                 <small>{{ product.created.date }}</small> <br> <br>
-                <p>{{ product.description }}</p>
+                <p>{{ product.description|safe }}</p>
                 <p>{{ product.price }}</p> <br>
-                <img class="card-img-top" src="{{ product.image.url }}" alt="Card image cap" , style="width: 300px">
+                <img class="card-img-top" src="{{ product.image.url }}" alt="Card image cap"  style="width: 300px"><br><br>
+
+                <form action="{% url 'orders:cart_add' product.id %}" method="post">
+                    {% csrf_token %}
+                    {{ form }}
+                    <input type="submit" value="add to cart">
+                </form>
+
             </div>
         </div>
     </div>
