@@ -11,3 +11,11 @@ class CartAddForm(forms.Form):
         max_value=100,
         initial=1
     )
+
+class CoupoanApplayForm(forms.Form):
+    """
+    Form for applying coupons.
+    """
+    code = forms.CharField(
+        label='Coupon code',
+    )

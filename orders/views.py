@@ -2,9 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from .cart import Cart
 from home.models import Product
-from .forms import CartAddForm
+from .forms import CartAddForm ,CoupoanApplayForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .models import Order, OrderItem
+from .models import Order, OrderItem, Coupon
 import requests
 import json
 from django.http import HttpResponse
@@ -37,9 +37,10 @@ class CartRemoveView(View):
         return redirect('orders:cart')
 
 class DetailOrderView(View , LoginRequiredMixin):
+    form = CoupoanApplayForm
     def get(self, request , order_id):
         order = get_object_or_404(Order, id=order_id)
-        return render(request, 'orders/detail_order.html' , {'order': order})
+        return render(request, 'orders/detail_order.html' , {'order': order , 'form': self.form})
 
 class CreateOrderView(View , LoginRequiredMixin):
     def get(self, request):
@@ -50,7 +51,23 @@ class CreateOrderView(View , LoginRequiredMixin):
         cart.clear()
         return redirect('orders:order_detail', order.id)
 
-
+class CouponApplyView(View , LoginRequiredMixin):
+    form_class = CoupoanApplayForm
+    def post(self, request , order_id):
+        now = datetime.datetime.now()
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            try:
+                coupon = Coupon.objects.get(code__exact=code , valid_from__lte=now , valid_to__gte=now , active=True)
+            except Coupon.DoesNotExist:
+                messages.error(request, 'Coupon does not exist or is not active' , extra_tags='alert alert-danger')
+                return redirect('orders:order_detail', order_id)
+            order = get_object_or_404(Order, id=order_id)
+            order.discount = coupon.discount
+            order.save()
+            messages.success(request, 'Coupon applied successfully' , extra_tags='alert alert-success')
+            return redirect('orders:order_detail', order_id)
 
 MERCHANT = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
 ZP_API_REQUEST = "https://api.zarinpal.com/pg/v4/payment/request.json"

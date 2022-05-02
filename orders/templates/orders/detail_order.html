@@ -2,7 +2,13 @@
 
 {% block content %}
     <h3>Checkout</h3>
-    <p>Total Price : {{ order.get_total_cost }}</p>
+    <p>Total Price : {{ order.get_total_cost }} Rial</p>
+    <form action="{% url 'orders:coupon_apply' order.id %}" method="POST">
+        {% csrf_token %}
+        {{ form }}
+    <input type="submit" value="Apply">
+    </form>
+    <br> <br>
      <a href="{% url 'orders:order_pay' order.id %}" class="btn btn-primary">Pay</a>
        <p>
         Thank you for your order.
