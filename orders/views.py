@@ -20,3 +20,11 @@ class CartAddView(View):
             cd = form.cleaned_data
             cart.add(product=product, quantity=cd['quantity'])
         return redirect('orders:cart')
+
+
+class CartRemoveView(View):
+    def get(self, request, product_id):
+        cart = Cart(request)
+        product = get_object_or_404(Product, id=product_id)
+        cart.remove(product)
+        return redirect('orders:cart')
