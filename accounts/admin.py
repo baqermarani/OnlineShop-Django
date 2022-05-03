@@ -20,14 +20,22 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': ('email', 'phone_number', 'full_name' ,'password')}),
-        ('Permissions', {'fields': ('is_admin','is_active','last_login')}),
+        ('Permissions', {'fields': ('is_admin','is_active','is_superuser','last_login','groups','user_permissions')}),
     )
     add_fieldsets = (
         (None, {'fields': ('email', 'phone_number', 'full_name', 'password1', 'password2')}),
     )
     search_fields = ('email','full_name')
     ordering = ('email',)
-    filter_horizontal = ()
+    filter_horizontal = ('groups','user_permissions')
+    readonly_fields = ('last_login',)
 
-admin.site.unregister(Group)
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        is_superuser = request.user.is_superuser
+        if not is_superuser:
+            form.base_fields['is_superuser'].widget.attrs['disabled'] = True
+        return form
+
+
 admin.site.register(User, UserAdmin) # Register the UserAdmin class

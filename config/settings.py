@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     #third party apps
     'storages',
     'django_celery_beat',
+    'ckeditor'
 
 ]
 
@@ -86,8 +87,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'Shop_db',
+        'USER': 'postgres',
+        'PASSWORD': 'mbaqerm98',
+        'HOST': 'localhost',
+        'PORT': '5433',
     }
 }
 
@@ -156,3 +161,10 @@ AWS_SERVICE_NAME = 's3'
 AWS_S3_FILE_OVERWRITE = False
 AWS_S3_REGION_NAME = 'us-east-1'
 AWS_LOCAL_STORAGE = f'{BASE_DIR}/aws/'
+
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+    },
+}

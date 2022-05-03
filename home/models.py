@@ -1,5 +1,5 @@
 from django.db import models
-
+from ckeditor.fields import RichTextField
 # Create your models here.
 from django.urls import reverse
 
@@ -24,7 +24,7 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=5, decimal_places=0)
-    description = models.TextField(blank=True)
+    description = RichTextField()
     image = models.ImageField()
     category = models.ManyToManyField(Category, related_name='products')
     slug = models.SlugField(max_length=200, unique=True)
