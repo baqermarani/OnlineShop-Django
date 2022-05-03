@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 
 def send_otp(phone_number, code):
     try:
-        api = KavenegarAPI('6E36756B314E5948676939382F3974684370394E54504569497565574A5839475A44586C4D646E627459553D')
+        api = KavenegarAPI('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
         params = {
             'sender': '',  # optional
             'receptor': phone_number,  # multiple mobile number, split by comma
